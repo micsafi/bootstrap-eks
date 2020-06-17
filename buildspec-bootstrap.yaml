@@ -25,9 +25,9 @@ phases:
     commands:
       - eksctl version
   build:
-#     run-as: Linux-user-name
-#     commands:
-#       - command
+    #     run-as: Linux-user-name
+    commands:
+      - echo "hello world"
 #       - command
 #     finally:
 #       - command
