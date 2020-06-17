@@ -2,10 +2,10 @@ version: 0.2
 
 # run-as: Linux-user-name
 
-# env:
-#   variables:
-#     key: "value"
-#     key: "value"
+env:
+  variables:
+    CLUSTER_NAME: "test-cluster-spot"
+    CODEBUILD_ROLE_ARN: arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
 #   parameter-store:
 #     key: "value"
 #     key: "value"
@@ -27,10 +27,10 @@ phases:
   build:
     #     run-as: Linux-user-name
     commands:
-      - echo "hello world"
-#       - command
-#     finally:
-#       - command
+      - eksctl create cluster -f eksctl/test-cluster-spot.yaml
+      - eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $CODEBUILD_ROLE_ARN --group system:masters --username admin
+    finally:
+      - kubectl get nodes
 #       - command
 #   post_build:
 #     run-as: Linux-user-name
