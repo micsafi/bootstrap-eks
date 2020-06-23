@@ -23,11 +23,12 @@ env:
 phases:
   install:
     commands:
+      - mkdir terraform-install
       - curl -o terraform_0.12.26_linux_amd64.zip https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
-      - unzip -u terraform_0.12.26_linux_amd64.zip
-      - chmod +x terraform
+      - unzip -d terraform-install terraform_0.12.26_linux_amd64.zip
+      - chmod +x terraform-install/terraform
       - ls -la
-      - mkdir -p ~/bin && cp terraform ~/bin/terraform && export PATH=~/bin:$PATH
+      - mkdir -p ~/bin && cp terraform-install/terraform ~/bin/terraform && export PATH=~/bin:$PATH
   build:
     #     run-as: Linux-user-name
     commands:
