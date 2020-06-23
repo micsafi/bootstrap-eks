@@ -31,19 +31,23 @@ phases:
       #- ls -la
       #- mkdir -p ~/bin && cp terraform-install/terraform ~/bin/terraform && export PATH=~/bin:$PATH
       - mv terraform-install/terraform /usr/local/bin/terraform
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/kubectl
   build:
     #     run-as: Linux-user-name
     commands:
       - cd terraform
       - terraform init -input=false
-      - terraform plan -out=eks-cluster.plan -input=false
-    finally:
-#      - kubectl get nodes
-#       - command
-#   post_build:
-#     run-as: Linux-user-name
-#     commands:
-#       - command
+      - terraform plan -out=eks-cluster.plan -input=false -var cluster_name=$EKS_CLUSTER_NAME
+      - terraform apply -input=false eks-cluster.plan
+    #finally:
+  #       - command
+  post_build:
+    #     run-as: Linux-user-name
+    commands:
+      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME
+      - kubectl get nodes
 #       - command
 #     finally:
 #       - command
