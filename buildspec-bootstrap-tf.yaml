@@ -34,7 +34,7 @@ phases:
   build:
     #     run-as: Linux-user-name
     commands:
-      - cd ~/terraform
+      - cd terraform
       - terraform init -input=false
       - terraform plan -out=eks-cluster.plan -input=false
     finally:
