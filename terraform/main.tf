@@ -40,6 +40,7 @@ data "aws_availability_zones" "available" {
 
 locals {
   #cluster_name = "test-eks-spot-${random_string.suffix.result}"
+  cluster_name = var.cluster_name
   admin_roles = [
     {
       rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EksCodeBuildkubectlRole"
