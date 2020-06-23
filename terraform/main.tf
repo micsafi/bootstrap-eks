@@ -40,6 +40,14 @@ data "aws_availability_zones" "available" {
 
 locals {
   cluster_name = "test-eks-spot-${random_string.suffix.result}"
+  admin_roles = [
+    {
+      rolearn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/EksCodeBuildkubectlRole"
+      username = "role1"
+      groups   = ["system:masters"]
+    },
+  ]
+
 }
 
 resource "random_string" "suffix" {
@@ -54,8 +62,21 @@ module "vpc" {
   name                 = "eks-vpc"
   cidr                 = "10.0.0.0/16"
   azs                  = data.aws_availability_zones.available.names
+  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
   enable_dns_hostnames = true
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
+
 }
 
 module "eks" {
@@ -63,6 +84,12 @@ module "eks" {
   cluster_name = local.cluster_name
   subnets      = module.vpc.public_subnets
   vpc_id       = module.vpc.vpc_id
+  map_roles = local.admin_roles
+
+  tags = {
+    Environment = "test"
+    CreatedBy  = "terraform"
+  }
 
   worker_groups_launch_template = [
     {
@@ -72,7 +99,7 @@ module "eks" {
       asg_max_size            = 3
       asg_desired_capacity    = 2
       kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=spot"
-      public_ip               = true
+      public_ip               = false
     },
   ]
 }
