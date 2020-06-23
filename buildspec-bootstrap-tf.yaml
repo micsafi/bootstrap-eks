@@ -6,6 +6,7 @@ env:
   variables:
     CLUSTER_NAME: "test-cluster-spot"
     CODEBUILD_ROLE_ARN: arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
+    TF_IN_AUTOMATION: "true"
 #   parameter-store:
 #     key: "value"
 #     key: "value"
@@ -33,7 +34,9 @@ phases:
   build:
     #     run-as: Linux-user-name
     commands:
-      - terraform version
+      - cd ~/terraform
+      - terraform init -input=false
+      - terraform plan -out=eks-cluster.plan -input=false
     finally:
 #      - kubectl get nodes
 #       - command
