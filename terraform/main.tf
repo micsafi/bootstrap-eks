@@ -100,7 +100,7 @@ module "eks" {
       asg_max_size            = 3
       asg_desired_capacity    = 2
       kubelet_extra_args      = "--node-labels=node.kubernetes.io/lifecycle=spot"
-      public_ip               = false
+      public_ip               = true
     },
   ]
 }
