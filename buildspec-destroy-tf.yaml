@@ -31,11 +31,11 @@ phases:
       #- ls -la
       #- mkdir -p ~/bin && cp terraform-install/terraform ~/bin/terraform && export PATH=~/bin:$PATH
       - mv terraform-install/terraform /usr/local/bin/terraform
-      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/kubectl
-      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --role-arn arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
-      - "kubectl get nodes"
+      #- curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+      #- chmod +x kubectl
+      #- mv kubectl /usr/local/bin/kubectl
+      #- aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --role-arn arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
+      #- "kubectl get nodes"
   build:
     #     run-as: Linux-user-name
     commands:
