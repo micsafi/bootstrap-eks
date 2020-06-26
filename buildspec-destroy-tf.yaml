@@ -1,0 +1,47 @@
+version: 0.2
+
+# run-as: Linux-user-name
+
+env:
+  variables:
+    CLUSTER_NAME: "test-cluster-spot"
+    CODEBUILD_ROLE_ARN: arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
+    TF_IN_AUTOMATION: "true"
+#   parameter-store:
+#     key: "value"
+#     key: "value"
+#   exported-variables:
+#     - variable
+#     - variable
+#   secrets-manager:
+#     key: secret-id:json-key:version-stage:version-id
+#   git-credential-helper: yes
+
+# proxy:
+#     upload-artifacts: yes
+#     logs: yes
+
+phases:
+  install:
+    commands:
+      - mkdir terraform-install
+      - curl -o terraform_0.12.26_linux_amd64.zip https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
+      - unzip -d terraform-install terraform_0.12.26_linux_amd64.zip
+      - chmod +x terraform-install/terraform
+      #- ls -la
+      #- mkdir -p ~/bin && cp terraform-install/terraform ~/bin/terraform && export PATH=~/bin:$PATH
+      - mv terraform-install/terraform /usr/local/bin/terraform
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/kubectl
+      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --role-arn arn:aws:iam::706442789969:role/EksCodeBuildkubectlRole
+      - "kubectl get nodes"
+  build:
+    #     run-as: Linux-user-name
+    commands:
+      - cd terraform
+      - terraform init -input=false
+      - terraform plan -input=false -var cluster_name=$EKS_CLUSTER_NAME -destroy
+      #- terraform apply -input=false eks-cluster.plan
+    #finally:
+  #       - command
