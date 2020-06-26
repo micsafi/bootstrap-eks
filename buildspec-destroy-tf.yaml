@@ -42,6 +42,6 @@ phases:
       - cd terraform
       - terraform init -input=false
       - terraform plan -input=false -var cluster_name=$EKS_CLUSTER_NAME -destroy
-      - terraform destroy -input=false
+      - terraform destroy -input=false -var cluster_name=$EKS_CLUSTER_NAME
     #finally:
   #       - command
